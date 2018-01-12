@@ -6,7 +6,7 @@ import (
 	"time"
 	"github.com/micro/go-micro"
 	"golang.org/x/net/context"
-	proto "proto"
+	proto "github.com/grubino/banandamonium-micro/random/proto"
 )
 
 type Random struct{};
