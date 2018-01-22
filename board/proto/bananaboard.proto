@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "random/proto/bananarandom.proto";
+
+service BananaBoard {
+    rpc RollDice(RollRequest) returns (RollResponse) {}
+    rpc Move(MoveRequest) returns (MoveResponse) {}
+}
+
+message MoveRequest {
+    int32 playerId = 1;
+    repeated int32 monkeyId = 2;
+    repeated int32 diceIndex = 3;
+}
+message MoveResponse {
+    bool moved = 1;
+    string error = 2;
+}
