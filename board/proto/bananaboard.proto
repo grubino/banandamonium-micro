@@ -1,53 +1,58 @@
 syntax = "proto3";
+import "random/proto/bananarandom.proto";
 
 service BananaBoard {
-    rpc Move(MoveRequest) returns (MoveResponse) {}
-    rpc BoardInfo(BoardInfoRequest) returns (BoardInfoResponse) {}
-    rpc RegisterDiceRoll(RegisterDiceRollRequest) returns (RegisterDiceRollResponse) {}
+  rpc Move (MoveRequest) returns (MoveResponse) {
+  }
+  rpc BoardInfo (BoardInfoRequest) returns (BoardInfoResponse) {
+  }
+  rpc RegisterDiceRoll (RegisterDiceRollRequest) returns (RegisterDiceRollResponse) {
+  }
 }
 
 message MonkeyMove {
-    int32 monkeyIndex = 1;
-    int32 placeIndex = 2;
+  int32 monkeyIndex = 1;
+  int32 placeIndex = 2;
 }
 
 message MoveRequest {
-    int64 gameId = 1;
-    int32 playerId = 2;
-    repeated MonkeyMove monkeyMoves = 3;
+  int64 gameId = 1;
+  int32 playerId = 2;
+  repeated MonkeyMove monkeyMoves = 3;
 }
 message MoveResponse {
-    bool moved = 1;
-    string error = 2;
+  bool moved = 1;
+  string error = 2;
 }
 
 message BoardInfoRequest {
-    int64 gameId = 1;
+  int64 gameId = 1;
 }
 
 message MonkeyPlacements {
-    int32 playerId = 1;
-    repeated int32 monkeyIndex = 2;
-    int32 placeIndex = 3;
+  int32 playerId = 1;
+  repeated int32 monkeyIndex = 2;
+  int32 placeIndex = 3;
 }
 
 message BoardInfo {
-    int64 gameId = 1;
-    repeated int32 playerId = 2;
-    int32 currentPlayerId = 3;
-    int32 numberOfDice = 4;
-    repeated MonkeyPlacements monkeys = 5;
+  int64 gameId = 1;
+  repeated int32 playerId = 2;
+  int32 currentPlayerId = 3;
+  int32 numberOfDice = 4;
+  repeated MonkeyPlacements monkeys = 5;
 }
 
 message BoardInfoResponse {
-    BoardInfo boardInfo = 1;
+  BoardInfo boardInfo = 1;
 }
 
 message RegisterDiceRollRequest {
-    int64 gameId = 1;
-    int32 playerId = 2;
+  int64 gameId = 1;
+  int32 playerId = 2;
+  Roll roll = 3;
 }
 
 message RegisterDiceRollResponse {
-    repeated int32 results = 1;
+  repeated int32 results = 1;
 }

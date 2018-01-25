@@ -9,6 +9,10 @@ message RollRequest {
   int32 playerId = 2;
 }
 
+message Roll {
+  repeated int32 dice = 1;
+}
+
 message RollResponse {
-  repeated int32 results = 1;
+  Roll roll = 1;
 }
