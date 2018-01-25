@@ -6,11 +6,15 @@ service BananaBoard {
     rpc RegisterDiceRoll(RegisterDiceRollRequest) returns (RegisterDiceRollResponse) {}
 }
 
+message MonkeyMove {
+    int32 monkeyIndex = 1;
+    int32 placeIndex = 2;
+}
+
 message MoveRequest {
     int64 gameId = 1;
     int32 playerId = 2;
-    repeated int32 monkeyIndex = 3;
-    repeated int32 placeIndex = 4;
+    repeated MonkeyMove monkeyMoves = 3;
 }
 message MoveResponse {
     bool moved = 1;
