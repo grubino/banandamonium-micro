@@ -1,18 +1,45 @@
 syntax = "proto3";
 
-import "random/proto/bananarandom.proto";
-
 service BananaBoard {
-    rpc RollDice(RollRequest) returns (RollResponse) {}
     rpc Move(MoveRequest) returns (MoveResponse) {}
+    rpc BoardInfo(BoardInfoRequest) returns (BoardInfoResponse) {}
+    rpc RegisterDiceRoll(RegisterDiceRollRequest) returns (RegisterDiceRollResponse) {}
 }
 
 message MoveRequest {
-    int32 playerId = 1;
-    repeated int32 monkeyId = 2;
-    repeated int32 diceIndex = 3;
+    int64 gameId = 1;
+    int32 playerId = 2;
+    repeated int32 monkeyIndex = 3;
+    repeated int32 placeIndex = 4;
 }
 message MoveResponse {
     bool moved = 1;
     string error = 2;
+}
+
+message BoardInfoRequest {
+    int64 gameId = 1;
+}
+
+message MonkeyPlacements {
+    int32 playerId = 1;
+    repeated int32 monkeyIndex = 2;
+    int32 placeIndex = 3;
+}
+
+message BoardInfoResponse {
+    int64 gameId = 1;
+    repeated int32 playerId = 2;
+    int32 currentPlayerId = 3;
+    int32 numberOfDice = 4;
+    repeated MonkeyPlacements monkeys = 5;
+}
+
+message RegisterDiceRollRequest {
+    int64 gameId = 1;
+    int32 playerId = 2;
+}
+
+message RegisterDiceRollResponse {
+    repeated int32 results = 1;
 }

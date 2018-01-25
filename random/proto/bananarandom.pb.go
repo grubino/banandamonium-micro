@@ -11,17 +11,11 @@ It has these top-level messages:
 	RollRequest
 	RollResponse
 */
-package proto
+package bananarandom
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-
-import (
-	client "github.com/micro/go-micro/client"
-	server "github.com/micro/go-micro/server"
-	context "golang.org/x/net/context"
-)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -59,7 +53,7 @@ func (m *RollRequest) GetPlayerId() int32 {
 }
 
 type RollResponse struct {
-	Results []int32 `protobuf:"varint,3,rep,packed,name=results" json:"results,omitempty"`
+	Results []int32 `protobuf:"varint,1,rep,packed,name=results" json:"results,omitempty"`
 }
 
 func (m *RollResponse) Reset()                    { *m = RollResponse{} }
@@ -79,63 +73,6 @@ func init() {
 	proto.RegisterType((*RollResponse)(nil), "RollResponse")
 }
 
-// Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ client.Option
-var _ server.Option
-
-// Client API for BananaRandom service
-
-type BananaRandomClient interface {
-	RollDice(ctx context.Context, in *RollRequest, opts ...client.CallOption) (*RollResponse, error)
-}
-
-type bananaRandomClient struct {
-	c           client.Client
-	serviceName string
-}
-
-func NewBananaRandomClient(serviceName string, c client.Client) BananaRandomClient {
-	if c == nil {
-		c = client.NewClient()
-	}
-	if len(serviceName) == 0 {
-		serviceName = "bananarandom"
-	}
-	return &bananaRandomClient{
-		c:           c,
-		serviceName: serviceName,
-	}
-}
-
-func (c *bananaRandomClient) RollDice(ctx context.Context, in *RollRequest, opts ...client.CallOption) (*RollResponse, error) {
-	req := c.c.NewRequest(c.serviceName, "BananaRandom.RollDice", in)
-	out := new(RollResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Server API for BananaRandom service
-
-type BananaRandomHandler interface {
-	RollDice(context.Context, *RollRequest, *RollResponse) error
-}
-
-func RegisterBananaRandomHandler(s server.Server, hdlr BananaRandomHandler, opts ...server.HandlerOption) {
-	s.Handle(s.NewHandler(&BananaRandom{hdlr}, opts...))
-}
-
-type BananaRandom struct {
-	BananaRandomHandler
-}
-
-func (h *BananaRandom) RollDice(ctx context.Context, in *RollRequest, out *RollResponse) error {
-	return h.BananaRandomHandler.RollDice(ctx, in, out)
-}
-
 func init() { proto.RegisterFile("bananarandom.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
@@ -146,9 +83,9 @@ var fileDescriptor0 = []byte{
 	0x62, 0x4b, 0x4f, 0xcc, 0x4d, 0xf5, 0x4c, 0x91, 0x60, 0x54, 0x60, 0xd4, 0x60, 0x0d, 0x82, 0xf2,
 	0x84, 0xa4, 0xb8, 0x38, 0x0a, 0x72, 0x12, 0x2b, 0x53, 0x8b, 0x3c, 0x53, 0x24, 0x98, 0xc0, 0x32,
 	0x70, 0xbe, 0x92, 0x06, 0x17, 0x0f, 0xc4, 0x88, 0xe2, 0x82, 0xfc, 0xbc, 0xe2, 0x54, 0x21, 0x09,
-	0x2e, 0xf6, 0xa2, 0xd4, 0xe2, 0xd2, 0x9c, 0x92, 0x62, 0x09, 0x66, 0x05, 0x66, 0x0d, 0xd6, 0x20,
+	0x2e, 0xf6, 0xa2, 0xd4, 0xe2, 0xd2, 0x9c, 0x92, 0x62, 0x09, 0x46, 0x05, 0x66, 0x0d, 0xd6, 0x20,
 	0x18, 0xd7, 0xc8, 0x92, 0x8b, 0xc7, 0x09, 0xec, 0x84, 0x20, 0xb0, 0x13, 0x84, 0x34, 0xb9, 0x38,
 	0x40, 0x3a, 0x5d, 0x32, 0x93, 0x53, 0x85, 0x78, 0xf4, 0x90, 0xdc, 0x21, 0xc5, 0xab, 0x87, 0x6c,
-	0xa4, 0x12, 0x43, 0x12, 0x1b, 0xd8, 0xb9, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x9a, 0x94,
-	0x5b, 0x0e, 0xc4, 0x00, 0x00, 0x00,
+	0xa4, 0x12, 0x43, 0x12, 0x1b, 0xd8, 0xb9, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x7c, 0x12,
+	0xd8, 0xd5, 0xc4, 0x00, 0x00, 0x00,
 }

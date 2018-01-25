@@ -10,19 +10,17 @@ It is generated from these files:
 It has these top-level messages:
 	MoveRequest
 	MoveResponse
+	BoardInfoRequest
+	MonkeyPlacements
+	BoardInfoResponse
+	RegisterDiceRollRequest
+	RegisterDiceRollResponse
 */
 package bananaboard
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import bananarandom "random/proto"
-
-import (
-	client "github.com/micro/go-micro/client"
-	server "github.com/micro/go-micro/server"
-	context "golang.org/x/net/context"
-)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -36,15 +34,23 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type MoveRequest struct {
-	PlayerId  int32   `protobuf:"varint,1,opt,name=playerId" json:"playerId,omitempty"`
-	MonkeyId  []int32 `protobuf:"varint,2,rep,packed,name=monkeyId" json:"monkeyId,omitempty"`
-	DiceIndex []int32 `protobuf:"varint,3,rep,packed,name=diceIndex" json:"diceIndex,omitempty"`
+	GameId      int64   `protobuf:"varint,1,opt,name=gameId" json:"gameId,omitempty"`
+	PlayerId    int32   `protobuf:"varint,2,opt,name=playerId" json:"playerId,omitempty"`
+	MonkeyIndex []int32 `protobuf:"varint,3,rep,packed,name=monkeyIndex" json:"monkeyIndex,omitempty"`
+	PlaceIndex  []int32 `protobuf:"varint,4,rep,packed,name=placeIndex" json:"placeIndex,omitempty"`
 }
 
 func (m *MoveRequest) Reset()                    { *m = MoveRequest{} }
 func (m *MoveRequest) String() string            { return proto.CompactTextString(m) }
 func (*MoveRequest) ProtoMessage()               {}
 func (*MoveRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+
+func (m *MoveRequest) GetGameId() int64 {
+	if m != nil {
+		return m.GameId
+	}
+	return 0
+}
 
 func (m *MoveRequest) GetPlayerId() int32 {
 	if m != nil {
@@ -53,16 +59,16 @@ func (m *MoveRequest) GetPlayerId() int32 {
 	return 0
 }
 
-func (m *MoveRequest) GetMonkeyId() []int32 {
+func (m *MoveRequest) GetMonkeyIndex() []int32 {
 	if m != nil {
-		return m.MonkeyId
+		return m.MonkeyIndex
 	}
 	return nil
 }
 
-func (m *MoveRequest) GetDiceIndex() []int32 {
+func (m *MoveRequest) GetPlaceIndex() []int32 {
 	if m != nil {
-		return m.DiceIndex
+		return m.PlaceIndex
 	}
 	return nil
 }
@@ -91,101 +97,179 @@ func (m *MoveResponse) GetError() string {
 	return ""
 }
 
+type BoardInfoRequest struct {
+	GameId int64 `protobuf:"varint,1,opt,name=gameId" json:"gameId,omitempty"`
+}
+
+func (m *BoardInfoRequest) Reset()                    { *m = BoardInfoRequest{} }
+func (m *BoardInfoRequest) String() string            { return proto.CompactTextString(m) }
+func (*BoardInfoRequest) ProtoMessage()               {}
+func (*BoardInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+
+func (m *BoardInfoRequest) GetGameId() int64 {
+	if m != nil {
+		return m.GameId
+	}
+	return 0
+}
+
+type MonkeyPlacements struct {
+	PlayerId    int32   `protobuf:"varint,1,opt,name=playerId" json:"playerId,omitempty"`
+	MonkeyIndex []int32 `protobuf:"varint,2,rep,packed,name=monkeyIndex" json:"monkeyIndex,omitempty"`
+	PlaceIndex  int32   `protobuf:"varint,3,opt,name=placeIndex" json:"placeIndex,omitempty"`
+}
+
+func (m *MonkeyPlacements) Reset()                    { *m = MonkeyPlacements{} }
+func (m *MonkeyPlacements) String() string            { return proto.CompactTextString(m) }
+func (*MonkeyPlacements) ProtoMessage()               {}
+func (*MonkeyPlacements) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+
+func (m *MonkeyPlacements) GetPlayerId() int32 {
+	if m != nil {
+		return m.PlayerId
+	}
+	return 0
+}
+
+func (m *MonkeyPlacements) GetMonkeyIndex() []int32 {
+	if m != nil {
+		return m.MonkeyIndex
+	}
+	return nil
+}
+
+func (m *MonkeyPlacements) GetPlaceIndex() int32 {
+	if m != nil {
+		return m.PlaceIndex
+	}
+	return 0
+}
+
+type BoardInfoResponse struct {
+	GameId          int64               `protobuf:"varint,1,opt,name=gameId" json:"gameId,omitempty"`
+	PlayerId        []int32             `protobuf:"varint,2,rep,packed,name=playerId" json:"playerId,omitempty"`
+	CurrentPlayerId int32               `protobuf:"varint,3,opt,name=currentPlayerId" json:"currentPlayerId,omitempty"`
+	NumberOfDice    int32               `protobuf:"varint,4,opt,name=numberOfDice" json:"numberOfDice,omitempty"`
+	Monkeys         []*MonkeyPlacements `protobuf:"bytes,5,rep,name=monkeys" json:"monkeys,omitempty"`
+}
+
+func (m *BoardInfoResponse) Reset()                    { *m = BoardInfoResponse{} }
+func (m *BoardInfoResponse) String() string            { return proto.CompactTextString(m) }
+func (*BoardInfoResponse) ProtoMessage()               {}
+func (*BoardInfoResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+
+func (m *BoardInfoResponse) GetGameId() int64 {
+	if m != nil {
+		return m.GameId
+	}
+	return 0
+}
+
+func (m *BoardInfoResponse) GetPlayerId() []int32 {
+	if m != nil {
+		return m.PlayerId
+	}
+	return nil
+}
+
+func (m *BoardInfoResponse) GetCurrentPlayerId() int32 {
+	if m != nil {
+		return m.CurrentPlayerId
+	}
+	return 0
+}
+
+func (m *BoardInfoResponse) GetNumberOfDice() int32 {
+	if m != nil {
+		return m.NumberOfDice
+	}
+	return 0
+}
+
+func (m *BoardInfoResponse) GetMonkeys() []*MonkeyPlacements {
+	if m != nil {
+		return m.Monkeys
+	}
+	return nil
+}
+
+type RegisterDiceRollRequest struct {
+	GameId   int64 `protobuf:"varint,1,opt,name=gameId" json:"gameId,omitempty"`
+	PlayerId int32 `protobuf:"varint,2,opt,name=playerId" json:"playerId,omitempty"`
+}
+
+func (m *RegisterDiceRollRequest) Reset()                    { *m = RegisterDiceRollRequest{} }
+func (m *RegisterDiceRollRequest) String() string            { return proto.CompactTextString(m) }
+func (*RegisterDiceRollRequest) ProtoMessage()               {}
+func (*RegisterDiceRollRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+
+func (m *RegisterDiceRollRequest) GetGameId() int64 {
+	if m != nil {
+		return m.GameId
+	}
+	return 0
+}
+
+func (m *RegisterDiceRollRequest) GetPlayerId() int32 {
+	if m != nil {
+		return m.PlayerId
+	}
+	return 0
+}
+
+type RegisterDiceRollResponse struct {
+	Results []int32 `protobuf:"varint,1,rep,packed,name=results" json:"results,omitempty"`
+}
+
+func (m *RegisterDiceRollResponse) Reset()                    { *m = RegisterDiceRollResponse{} }
+func (m *RegisterDiceRollResponse) String() string            { return proto.CompactTextString(m) }
+func (*RegisterDiceRollResponse) ProtoMessage()               {}
+func (*RegisterDiceRollResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+
+func (m *RegisterDiceRollResponse) GetResults() []int32 {
+	if m != nil {
+		return m.Results
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*MoveRequest)(nil), "MoveRequest")
 	proto.RegisterType((*MoveResponse)(nil), "MoveResponse")
-}
-
-// Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ client.Option
-var _ server.Option
-
-// Client API for BananaBoard service
-
-type BananaBoardClient interface {
-	RollDice(ctx context.Context, in *bananarandom.RollRequest, opts ...client.CallOption) (*bananarandom.RollResponse, error)
-	Move(ctx context.Context, in *MoveRequest, opts ...client.CallOption) (*MoveResponse, error)
-}
-
-type bananaBoardClient struct {
-	c           client.Client
-	serviceName string
-}
-
-func NewBananaBoardClient(serviceName string, c client.Client) BananaBoardClient {
-	if c == nil {
-		c = client.NewClient()
-	}
-	if len(serviceName) == 0 {
-		serviceName = "bananaboard"
-	}
-	return &bananaBoardClient{
-		c:           c,
-		serviceName: serviceName,
-	}
-}
-
-func (c *bananaBoardClient) RollDice(ctx context.Context, in *bananarandom.RollRequest, opts ...client.CallOption) (*bananarandom.RollResponse, error) {
-	req := c.c.NewRequest(c.serviceName, "BananaBoard.RollDice", in)
-	out := new(bananarandom.RollResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *bananaBoardClient) Move(ctx context.Context, in *MoveRequest, opts ...client.CallOption) (*MoveResponse, error) {
-	req := c.c.NewRequest(c.serviceName, "BananaBoard.Move", in)
-	out := new(MoveResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Server API for BananaBoard service
-
-type BananaBoardHandler interface {
-	RollDice(context.Context, *bananarandom.RollRequest, *bananarandom.RollResponse) error
-	Move(context.Context, *MoveRequest, *MoveResponse) error
-}
-
-func RegisterBananaBoardHandler(s server.Server, hdlr BananaBoardHandler, opts ...server.HandlerOption) {
-	s.Handle(s.NewHandler(&BananaBoard{hdlr}, opts...))
-}
-
-type BananaBoard struct {
-	BananaBoardHandler
-}
-
-func (h *BananaBoard) RollDice(ctx context.Context, in *bananarandom.RollRequest, out *bananarandom.RollResponse) error {
-	return h.BananaBoardHandler.RollDice(ctx, in, out)
-}
-
-func (h *BananaBoard) Move(ctx context.Context, in *MoveRequest, out *MoveResponse) error {
-	return h.BananaBoardHandler.Move(ctx, in, out)
+	proto.RegisterType((*BoardInfoRequest)(nil), "BoardInfoRequest")
+	proto.RegisterType((*MonkeyPlacements)(nil), "MonkeyPlacements")
+	proto.RegisterType((*BoardInfoResponse)(nil), "BoardInfoResponse")
+	proto.RegisterType((*RegisterDiceRollRequest)(nil), "RegisterDiceRollRequest")
+	proto.RegisterType((*RegisterDiceRollResponse)(nil), "RegisterDiceRollResponse")
 }
 
 func init() { proto.RegisterFile("bananaboard.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 231 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x90, 0x31, 0x4f, 0xc3, 0x30,
-	0x10, 0x85, 0x9b, 0x96, 0xa2, 0xf4, 0x9a, 0x0e, 0x58, 0x0c, 0x91, 0x85, 0x44, 0x64, 0x09, 0xa9,
-	0x2c, 0xae, 0x04, 0x1b, 0x63, 0xc5, 0x92, 0x81, 0xc5, 0x7f, 0x00, 0x39, 0xf1, 0x0d, 0x15, 0x89,
-	0x2f, 0x38, 0xa5, 0xa2, 0xff, 0x1e, 0xd9, 0x57, 0x20, 0x9b, 0xbf, 0xf7, 0x2c, 0xbd, 0xf7, 0x0e,
-	0x6e, 0x1a, 0xeb, 0xad, 0xb7, 0x0d, 0xd9, 0xe0, 0xf4, 0x10, 0xe8, 0x48, 0xf2, 0x3e, 0x58, 0xef,
-	0xa8, 0xdf, 0x25, 0xda, 0xb1, 0xcf, 0x12, 0x7f, 0x50, 0x2d, 0xac, 0xdf, 0xe8, 0x84, 0x06, 0x3f,
-	0xbf, 0x70, 0x3c, 0x0a, 0x09, 0xf9, 0xd0, 0xd9, 0x33, 0x86, 0xda, 0x95, 0x59, 0x95, 0x6d, 0x97,
-	0xe6, 0x8f, 0xa3, 0xd7, 0x93, 0xff, 0xc0, 0x73, 0xed, 0xca, 0x79, 0xb5, 0x88, 0xde, 0x2f, 0x8b,
-	0x3b, 0x58, 0xb9, 0x43, 0x8b, 0xb5, 0x77, 0xf8, 0x5d, 0x2e, 0x92, 0xf9, 0x2f, 0xa8, 0x17, 0x28,
-	0x38, 0x64, 0x1c, 0xc8, 0x8f, 0x28, 0x6e, 0x61, 0xd9, 0xd3, 0x09, 0x39, 0x22, 0x37, 0x0c, 0x51,
-	0xc5, 0x10, 0x28, 0x94, 0xf3, 0x2a, 0xdb, 0xae, 0x0c, 0xc3, 0xd3, 0x3b, 0xac, 0xf7, 0xa9, 0xf6,
-	0x3e, 0xce, 0x12, 0x8f, 0x90, 0x1b, 0xea, 0xba, 0xd7, 0x43, 0x8b, 0xa2, 0xd0, 0xf1, 0x79, 0xa9,
-	0x2e, 0x37, 0x17, 0xe2, 0x0c, 0x35, 0x13, 0x0f, 0x70, 0x15, 0x53, 0x45, 0xa1, 0x27, 0x0b, 0xe5,
-	0x46, 0x4f, 0xab, 0xa8, 0x59, 0x73, 0x9d, 0x0e, 0xf1, 0xfc, 0x13, 0x00, 0x00, 0xff, 0xff, 0x97,
-	0x6b, 0x48, 0x04, 0x3e, 0x01, 0x00, 0x00,
+	// 392 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x53, 0xcd, 0x8e, 0xd3, 0x30,
+	0x18, 0xac, 0x37, 0xcd, 0xfe, 0x7c, 0x29, 0xa2, 0xb1, 0x10, 0x98, 0x1c, 0x50, 0x64, 0x09, 0x29,
+	0x02, 0xc9, 0x87, 0x65, 0x4f, 0x1c, 0x57, 0x5c, 0x72, 0xa8, 0x58, 0xf9, 0x0d, 0x92, 0xe6, 0xdb,
+	0xaa, 0x22, 0xb1, 0x83, 0x9d, 0x54, 0xf4, 0xcc, 0x33, 0xf1, 0x02, 0x3c, 0x19, 0x8a, 0xd3, 0x56,
+	0x69, 0xaa, 0x52, 0x24, 0x8e, 0x33, 0x1a, 0xc7, 0x33, 0x93, 0x31, 0x84, 0x79, 0xa6, 0x32, 0x95,
+	0xe5, 0x3a, 0x33, 0x85, 0xa8, 0x8d, 0x6e, 0x34, 0xff, 0x49, 0x20, 0x58, 0xe8, 0x0d, 0x4a, 0xfc,
+	0xde, 0xa2, 0x6d, 0xe8, 0x6b, 0xb8, 0x5e, 0x65, 0x15, 0xa6, 0x05, 0x23, 0x31, 0x49, 0x3c, 0xb9,
+	0x43, 0x34, 0x82, 0xdb, 0xba, 0xcc, 0xb6, 0x68, 0xd2, 0x82, 0x5d, 0xc5, 0x24, 0xf1, 0xe5, 0x01,
+	0xd3, 0x18, 0x82, 0x4a, 0xab, 0x6f, 0xb8, 0x4d, 0x55, 0x81, 0x3f, 0x98, 0x17, 0x7b, 0x89, 0x2f,
+	0x87, 0x14, 0x7d, 0x07, 0x50, 0x97, 0xd9, 0x12, 0x7b, 0xc1, 0xd4, 0x09, 0x06, 0x0c, 0xff, 0x0c,
+	0xb3, 0xde, 0x84, 0xad, 0xb5, 0xb2, 0x48, 0x5f, 0x81, 0x5f, 0xe9, 0x0d, 0xf6, 0x26, 0x6e, 0x65,
+	0x0f, 0x3a, 0x16, 0x8d, 0xd1, 0xc6, 0x19, 0xb8, 0x93, 0x3d, 0xe0, 0x1f, 0x60, 0xfe, 0xd8, 0x05,
+	0x4a, 0xd5, 0xb3, 0xbe, 0x90, 0x82, 0xd7, 0x30, 0x5f, 0x38, 0x5b, 0x4f, 0xdd, 0xdd, 0x15, 0xaa,
+	0xc6, 0x1e, 0x25, 0x23, 0x7f, 0x4f, 0x76, 0x75, 0x29, 0x99, 0xe7, 0xce, 0x0f, 0x93, 0xfd, 0x26,
+	0x10, 0x0e, 0xec, 0xed, 0xf2, 0xfd, 0x5b, 0xcb, 0xde, 0x91, 0x97, 0x04, 0x5e, 0x2e, 0x5b, 0x63,
+	0x50, 0x35, 0x4f, 0x7b, 0x49, 0x7f, 0xdd, 0x98, 0xa6, 0x1c, 0x66, 0xaa, 0xad, 0x72, 0x34, 0x5f,
+	0x9f, 0xbf, 0xac, 0x97, 0xc8, 0xa6, 0x4e, 0x76, 0xc4, 0xd1, 0x8f, 0x70, 0xd3, 0xc7, 0xb0, 0xcc,
+	0x8f, 0xbd, 0x24, 0xb8, 0x0f, 0xc5, 0xb8, 0x19, 0xb9, 0x57, 0xf0, 0x05, 0xbc, 0x91, 0xb8, 0x5a,
+	0xdb, 0x06, 0x4d, 0x77, 0x58, 0xea, 0xb2, 0xfc, 0x8f, 0xbd, 0xf0, 0x07, 0x60, 0xa7, 0x9f, 0xdb,
+	0x35, 0xc3, 0xe0, 0xc6, 0xa0, 0x6d, 0xcb, 0xc6, 0x32, 0xe2, 0x0a, 0xd8, 0xc3, 0xfb, 0x5f, 0x04,
+	0x82, 0x47, 0xb7, 0x5f, 0xd7, 0x27, 0x7d, 0x0f, 0xd3, 0x6e, 0x33, 0x74, 0x26, 0x06, 0xfb, 0x8d,
+	0x5e, 0x88, 0xe1, 0x90, 0xf8, 0x84, 0x3e, 0xc0, 0xdd, 0xa1, 0x7f, 0x1a, 0x8a, 0xf1, 0x54, 0x22,
+	0x2a, 0x4e, 0x7e, 0x0f, 0x9f, 0xd0, 0x14, 0xe6, 0x63, 0x8b, 0x94, 0x89, 0x33, 0x25, 0x44, 0x6f,
+	0xc5, 0xb9, 0x3c, 0x7c, 0x92, 0x5f, 0xbb, 0x87, 0xf6, 0xe9, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x02, 0xa5, 0x5f, 0x87, 0x7d, 0x03, 0x00, 0x00,
 }

@@ -10,5 +10,5 @@ message RollRequest {
 }
 
 message RollResponse {
-  repeated int32 results = 3;
+  repeated int32 results = 1;
 }
