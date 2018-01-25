@@ -17,6 +17,12 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
+import (
+	client "github.com/micro/go-micro/client"
+	server "github.com/micro/go-micro/server"
+	context "golang.org/x/net/context"
+)
+
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
@@ -71,6 +77,63 @@ func (m *RollResponse) GetResults() []int32 {
 func init() {
 	proto.RegisterType((*RollRequest)(nil), "RollRequest")
 	proto.RegisterType((*RollResponse)(nil), "RollResponse")
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ client.Option
+var _ server.Option
+
+// Client API for BananaRandom service
+
+type BananaRandomClient interface {
+	RollDice(ctx context.Context, in *RollRequest, opts ...client.CallOption) (*RollResponse, error)
+}
+
+type bananaRandomClient struct {
+	c           client.Client
+	serviceName string
+}
+
+func NewBananaRandomClient(serviceName string, c client.Client) BananaRandomClient {
+	if c == nil {
+		c = client.NewClient()
+	}
+	if len(serviceName) == 0 {
+		serviceName = "bananarandom"
+	}
+	return &bananaRandomClient{
+		c:           c,
+		serviceName: serviceName,
+	}
+}
+
+func (c *bananaRandomClient) RollDice(ctx context.Context, in *RollRequest, opts ...client.CallOption) (*RollResponse, error) {
+	req := c.c.NewRequest(c.serviceName, "BananaRandom.RollDice", in)
+	out := new(RollResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for BananaRandom service
+
+type BananaRandomHandler interface {
+	RollDice(context.Context, *RollRequest, *RollResponse) error
+}
+
+func RegisterBananaRandomHandler(s server.Server, hdlr BananaRandomHandler, opts ...server.HandlerOption) {
+	s.Handle(s.NewHandler(&BananaRandom{hdlr}, opts...))
+}
+
+type BananaRandom struct {
+	BananaRandomHandler
+}
+
+func (h *BananaRandom) RollDice(ctx context.Context, in *RollRequest, out *RollResponse) error {
+	return h.BananaRandomHandler.RollDice(ctx, in, out)
 }
 
 func init() { proto.RegisterFile("bananarandom.proto", fileDescriptor0) }

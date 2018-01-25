@@ -22,6 +22,12 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
+import (
+	client "github.com/micro/go-micro/client"
+	server "github.com/micro/go-micro/server"
+	context "golang.org/x/net/context"
+)
+
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
@@ -241,6 +247,95 @@ func init() {
 	proto.RegisterType((*BoardInfoResponse)(nil), "BoardInfoResponse")
 	proto.RegisterType((*RegisterDiceRollRequest)(nil), "RegisterDiceRollRequest")
 	proto.RegisterType((*RegisterDiceRollResponse)(nil), "RegisterDiceRollResponse")
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ client.Option
+var _ server.Option
+
+// Client API for BananaBoard service
+
+type BananaBoardClient interface {
+	Move(ctx context.Context, in *MoveRequest, opts ...client.CallOption) (*MoveResponse, error)
+	BoardInfo(ctx context.Context, in *BoardInfoRequest, opts ...client.CallOption) (*BoardInfoResponse, error)
+	RegisterDiceRoll(ctx context.Context, in *RegisterDiceRollRequest, opts ...client.CallOption) (*RegisterDiceRollResponse, error)
+}
+
+type bananaBoardClient struct {
+	c           client.Client
+	serviceName string
+}
+
+func NewBananaBoardClient(serviceName string, c client.Client) BananaBoardClient {
+	if c == nil {
+		c = client.NewClient()
+	}
+	if len(serviceName) == 0 {
+		serviceName = "bananaboard"
+	}
+	return &bananaBoardClient{
+		c:           c,
+		serviceName: serviceName,
+	}
+}
+
+func (c *bananaBoardClient) Move(ctx context.Context, in *MoveRequest, opts ...client.CallOption) (*MoveResponse, error) {
+	req := c.c.NewRequest(c.serviceName, "BananaBoard.Move", in)
+	out := new(MoveResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bananaBoardClient) BoardInfo(ctx context.Context, in *BoardInfoRequest, opts ...client.CallOption) (*BoardInfoResponse, error) {
+	req := c.c.NewRequest(c.serviceName, "BananaBoard.BoardInfo", in)
+	out := new(BoardInfoResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bananaBoardClient) RegisterDiceRoll(ctx context.Context, in *RegisterDiceRollRequest, opts ...client.CallOption) (*RegisterDiceRollResponse, error) {
+	req := c.c.NewRequest(c.serviceName, "BananaBoard.RegisterDiceRoll", in)
+	out := new(RegisterDiceRollResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for BananaBoard service
+
+type BananaBoardHandler interface {
+	Move(context.Context, *MoveRequest, *MoveResponse) error
+	BoardInfo(context.Context, *BoardInfoRequest, *BoardInfoResponse) error
+	RegisterDiceRoll(context.Context, *RegisterDiceRollRequest, *RegisterDiceRollResponse) error
+}
+
+func RegisterBananaBoardHandler(s server.Server, hdlr BananaBoardHandler, opts ...server.HandlerOption) {
+	s.Handle(s.NewHandler(&BananaBoard{hdlr}, opts...))
+}
+
+type BananaBoard struct {
+	BananaBoardHandler
+}
+
+func (h *BananaBoard) Move(ctx context.Context, in *MoveRequest, out *MoveResponse) error {
+	return h.BananaBoardHandler.Move(ctx, in, out)
+}
+
+func (h *BananaBoard) BoardInfo(ctx context.Context, in *BoardInfoRequest, out *BoardInfoResponse) error {
+	return h.BananaBoardHandler.BoardInfo(ctx, in, out)
+}
+
+func (h *BananaBoard) RegisterDiceRoll(ctx context.Context, in *RegisterDiceRollRequest, out *RegisterDiceRollResponse) error {
+	return h.BananaBoardHandler.RegisterDiceRoll(ctx, in, out)
 }
 
 func init() { proto.RegisterFile("bananaboard.proto", fileDescriptor0) }
