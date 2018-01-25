@@ -31,12 +31,16 @@ message MonkeyPlacements {
     int32 placeIndex = 3;
 }
 
-message BoardInfoResponse {
+message BoardInfo {
     int64 gameId = 1;
     repeated int32 playerId = 2;
     int32 currentPlayerId = 3;
     int32 numberOfDice = 4;
     repeated MonkeyPlacements monkeys = 5;
+}
+
+message BoardInfoResponse {
+    BoardInfo boardInfo = 1;
 }
 
 message RegisterDiceRollRequest {
